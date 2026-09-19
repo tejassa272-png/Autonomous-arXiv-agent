@@ -36,6 +36,7 @@ def generate_briefing(state: AgentState):
     
     # Trims to the first 40,000 characters (~10,000 tokens) 
     # This covers the Abstract, Intro, and Methodology
+    # This is done because free tier cannot process full paper
     if len(cleaned_text) > 40000:
         cleaned_text = cleaned_text[:40000] + "\n\n... [CONTENT TRUNCATED FOR SUMMARY] ..."
 
