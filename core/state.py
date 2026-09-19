@@ -13,7 +13,7 @@ class AgentState(TypedDict):
 
     #parsing and storage
     parsed_text: Optional[str]
-    vector_stored_path: Optional[str]
+    vector_store_path: Optional[str]
 
     #output
     summary: Optional[Dict[str,Any]]
