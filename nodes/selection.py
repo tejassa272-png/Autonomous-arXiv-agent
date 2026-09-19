@@ -14,8 +14,8 @@ def select_best_paper(state: AgentState) -> dict:
     """
 
     #checking if the user already provided the id
-    if state.get("is_direct_id") or state.get("error_message"):
-        return {} 
+    if state.get("is_direct_id"):
+        return {}
 
     #checks for candidate_paper length
     candidate_papers = state.get("candidate_papers", [])
