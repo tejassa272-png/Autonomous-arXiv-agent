@@ -45,17 +45,21 @@ def main():
         "error_message": None
     }
     
-    # Executes the Ingestion Graph and stream the progress
+    # Executes the Ingestion Graph and streams the progress
     for step in agent.stream(state):
         node_name = list(step.keys())[0]
         print(f" -> Completed node: {node_name}")
         
-        if "error_message" in step[node_name] and step[node_name]["error_message"]:
-            print(f"\n[!] Pipeline Error: {step[node_name]['error_message']}")
-            sys.exit(1)
-            
-        # Updates the local state tracker
-        state.update(step[node_name])
+        node_update = step[node_name]
+        
+        # LangGraph yields 'None' if a node returns an empty dictionary {}
+        if node_update:
+            if "error_message" in node_update and node_update["error_message"]:
+                print(f"\n[!] Pipeline Error: {node_update['error_message']}")
+                sys.exit(1)
+                
+            # Updates the local state tracker
+            state.update(node_update)
         
     # Ensures the summary was successfully generated before printing
     if not state.get("summary"):
@@ -85,7 +89,7 @@ def main():
         print(f" - {f}")
     print("="*60)
     
-    # Launches the RAG qa loop
+    # Launches the RAG QA loop
     print("\n[?] Entering QA Mode. Ask questions about the paper (type 'exit' to quit).")
     while True:
         try:
