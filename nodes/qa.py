@@ -77,7 +77,7 @@ def answer_question(state: AgentState) -> dict:
         
         # Used Groq for low latency generation
         llm = ChatGroq(
-            model="llama-3.3-70b-versatile",
+            model="llama-3.1-70b-versatile",
             temperature=0, 
             api_key=os.getenv("GROQ_API_KEY")
         )
