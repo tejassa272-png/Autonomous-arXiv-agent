@@ -1,4 +1,5 @@
 import os
+import re
 import requests
 import pymupdf4llm
 from core.state import AgentState
