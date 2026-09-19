@@ -41,8 +41,13 @@ def fetch_and_parse(state: AgentState):
         
         if not markdown_text or len(markdown_text.strip()) < 100:
             return {"error_message": "PDF parsing failed: Document appears empty or unreadable."}
-        
-        #updates the state with parsed text
+            
+        # cuts the References/Bibliography section to save tokens and reduce latency
+        split_match = re.search(r'\n#+\s*(References|Bibliography)\s*\n', markdown_text, re.IGNORECASE)
+        if split_match:
+            markdown_text = markdown_text[:split_match.start()]
+
+        #updates the state with parsed text            
         return {"parsed_text": markdown_text}
 
     except requests.exceptions.RequestException as e:
