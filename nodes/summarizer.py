@@ -1,5 +1,6 @@
 import os
 import json
+import re
 from pydantic import BaseModel, Field
 from langchain_google_genai import ChatGoogleGenerativeAI
 from core.state import AgentState
@@ -30,6 +31,14 @@ def generate_briefing(state: AgentState):
     if not parsed_text:
         return {"error_message": "No parsed text available for summarization"}
 
+    #Input sanitization
+    cleaned_text = re.sub(r'\n{3,}', '\n\n', parsed_text)
+    
+    # Trims to the first 40,000 characters (~10,000 tokens) 
+    # This covers the Abstract, Intro, and Methodology
+    if len(cleaned_text) > 40000:
+        cleaned_text = cleaned_text[:40000] + "\n\n... [CONTENT TRUNCATED FOR SUMMARY] ..."
+
     # Extracts metadata for the selected paper
     candidate_papers = state.get("candidate_papers", [])
     paper_meta = next((p for p in candidate_papers if p["id"] == selected_id), {})
@@ -46,13 +55,13 @@ def generate_briefing(state: AgentState):
     Link: {paper_meta.get('pdf_url', 'Unknown')}
 
     Paper Content:
-    {parsed_text}
+    {cleaned_text}
     """
 
     try:
         llm = ChatGoogleGenerativeAI(
             model="gemini-2.5-flash",
-            temperature=0.2, # Low temperature to prevent hallucinations
+            temperature=0.0, # Reduced to 0 to prevent hallucination loops
             api_key=os.getenv("GEMINI_API_KEY")
         )
         
