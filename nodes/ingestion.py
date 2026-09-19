@@ -10,9 +10,6 @@ def chunk_and_embed(state: AgentState) -> dict:
     Chunks the parsed Markdown using header-aware splitting, 
     embeds chunks locally with FastEmbed, and indexes them in embedded Qdrant.
     """
-    #checks for errors
-    if state.get("error_message"):
-        return {}
 
     parsed_text = state.get("parsed_text")
     paper_id = state.get("selected_paper_id")

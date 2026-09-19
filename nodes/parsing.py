@@ -9,10 +9,6 @@ def fetch_and_parse(state: AgentState):
     This node fetches the pdf from arXiv and parses it
     """
 
-    #returns empty if any error is found in the upper nodes
-    if state.get("error_message"):
-        return {}
-
     pdf_url = state.get("pdf_url")
     paper_id = state.get("selected_paper_id")
     

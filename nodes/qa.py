@@ -12,8 +12,6 @@ def answer_question(state: AgentState) -> dict:
     Retrieves relevant chunks from Qdrant, reranks them using FlashRank, 
     and generates a grounded answer using Groq (Llama 3).
     """
-    if state.get("error_message"):
-        return {}
         
     query = state["query"]
     qdrant_path = state.get("vector_store_path")

@@ -22,9 +22,6 @@ def generate_briefing(state: AgentState):
     """
     Consumes the parsed Markdown and generates a JSON executive briefing
     """
-    #checks for error message
-    if state.get("error_message"):
-        return {}
 
     #extracts the parsed text and selected paper id
     parsed_text = state.get("parsed_text")
