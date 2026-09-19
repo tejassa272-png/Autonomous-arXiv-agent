@@ -2,8 +2,7 @@ import os
 from qdrant_client import QdrantClient
 from langchain_qdrant import QdrantVectorStore
 from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
-from langchain.retrievers import ContextualCompressionRetriever
-from langchain.retrievers.document_compressors import FlashrankRerank
+from langchain_community.document_compressors.flashrank_rerank import FlashrankRerank
 from langchain_groq import ChatGroq
 from core.state import AgentState
 
@@ -34,18 +33,13 @@ def answer_question(state: AgentState) -> dict:
             embedding=embeddings
         )
         
-        # Fetches the top 10 chunks
+        #Fetches the top 10 chunks
         retriever = vector_store.as_retriever(search_kwargs={"k": 10})
+        initial_docs = retriever.invoke(query)
         
-        # Flashrank selects the top 3 chunks
+        #Passes the fetched chunks directly into the compressor
         compressor = FlashrankRerank(top_n=3)
-        compression_retriever = ContextualCompressionRetriever(
-            base_compressor=compressor,
-            base_retriever=retriever
-        )
-        
-        # Retrieves docs
-        retrieved_docs = compression_retriever.invoke(query)
+        retrieved_docs = compressor.compress_documents(documents=initial_docs, query=query)
         
         # Empty retrieval safety check
         if not retrieved_docs:
