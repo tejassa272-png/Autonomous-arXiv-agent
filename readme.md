@@ -1,5 +1,8 @@
 # Autonomous arXiv Paper Digest & QA Agent
 
+**📹 [Watch the 4-Minute Architecture Walkthrough](https://drive.google.com/file/d/1XR9QW5rTNV6sIHmykGpksF0Y3_nYIkby/view?usp=sharing)**  
+*(I couldn't cover every single detail in the 4-minute window, so please read through this README for the full technical breakdown!)*
+
 An autonomous, containerized AI research agent built using **LangGraph**, **Gemini 2.5 Flash**, **Groq (LLaMA 3)**, **Qdrant (Local Mode)**, and **FlashRank**. This agent fetches academic papers from arXiv via natural language topics or direct IDs, parses them with robust fallback handling, generates structured executive briefings, and provides a grounded RAG-based conversational Q&A loop.
 
 ---
