@@ -4,32 +4,29 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from core.state import AgentState
 
 class PaperSelection(BaseModel):
-    #schema definition for LLM
+    # schema definition for LLM
     selected_paper_id: str = Field(description="The exact arXiv ID of the most relevant paper.")
     reasoning: str = Field(description="Brief reason for selecting this paper based on the user's query.")
 
 def select_best_paper(state: AgentState) -> dict:
     """
-    This node performs the logic to fetch the best paper using the gemini LLM
+    This node performs the logic to fetch the best paper using the gemini LLM.
+    (Only executed if the user searched by semantic topic, enforced by graph.py)
     """
 
-    #checking if the user already provided the id
-    if state.get("is_direct_id"):
-        return {}
-
-    #checks for candidate_paper length
+    # checks for candidate_paper length
     candidate_papers = state.get("candidate_papers", [])
     if not candidate_papers:
         return {"error_message": "No papers available for selection"}
 
-    #checks if exactly only one paper is present
+    # checks if exactly only one paper is present
     if len(candidate_papers) == 1:
         return {
             "selected_paper_id": candidate_papers[0]["id"],
             "pdf_url": candidate_papers[0]["pdf_url"]
         }
 
-    #calls the gemini api to fetch the relevant paper
+    # calls the gemini api to fetch the relevant paper
     query = state["query"]
     candidates_text = ""
     for i, paper in enumerate(candidate_papers):
@@ -53,13 +50,13 @@ def select_best_paper(state: AgentState) -> dict:
             api_key=os.getenv("GEMINI_API_KEY")
         )
         
-        #binding the pydantic schema with the LLM
+        # binding the pydantic schema with the LLM
         structured_llm = llm.with_structured_output(PaperSelection)
         result = structured_llm.invoke(prompt)
         chosen_id = result.selected_paper_id
         
         pdf_url = None
-        #id matching with the LLM result is done
+        # id matching with the LLM result is done
         for paper in candidate_papers:
             if chosen_id in paper["id"] or paper["id"] in chosen_id:
                 chosen_id = paper["id"] 
@@ -72,10 +69,8 @@ def select_best_paper(state: AgentState) -> dict:
             
         return {"selected_paper_id": chosen_id, "pdf_url": pdf_url}
     
-
-    #it is a broder except block can be made function specific -- returns the top relevance-sorted paper instead of crashing
     except Exception as e:
-        print("Exception block triggered in selection.py") #for debugging
+        print("Exception block triggered in selection.py") # for debugging
         return {
             "selected_paper_id": candidate_papers[0]["id"],
             "pdf_url": candidate_papers[0]["pdf_url"]

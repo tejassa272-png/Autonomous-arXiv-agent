@@ -34,12 +34,12 @@ def answer_question(state: AgentState) -> dict:
             embedding=embeddings
         )
         
-        # Fetches the top 10 chunks manually
-        retriever = vector_store.as_retriever(search_kwargs={"k": 10})
+        # Fetches the top 15 chunks manually
+        retriever = vector_store.as_retriever(search_kwargs={"k": 15})
         initial_docs = retriever.invoke(query)
         
         # Reranks chunks
-        compressor = FlashrankRerank(top_n=3)
+        compressor = FlashrankRerank(top_n=5)
         retrieved_docs = compressor.compress_documents(documents=initial_docs, query=query)
         
         # Empty retrieval safety check
@@ -93,4 +93,5 @@ def answer_question(state: AgentState) -> dict:
     
     finally:
             #releases the file lock so consecutive queries don't flake
-            client.close()
+            if client:
+                client.close()

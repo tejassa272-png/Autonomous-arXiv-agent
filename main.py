@@ -1,5 +1,28 @@
 import os
 import sys
+import logging
+import warnings
+
+# Kills HuggingFace download bars
+os.environ["HF_HUB_DISABLE_PROGRESS_BARS"] = "1"
+os.environ["HF_HUB_VERBOSITY"] = "error"
+# Kills FlashRank/ms-marco progress bars
+os.environ["TQDM_DISABLE"] = "1" 
+# Kills Google gRPC warnings
+os.environ["GRPC_VERBOSITY"] = "ERROR"
+os.environ["GLOG_minloglevel"] = "2"
+os.environ["PYTHONWARNINGS"] = "ignore"
+
+# Kills the Google AFC UserWarning
+warnings.filterwarnings("ignore")
+
+# Kills HTTPX and internal module logs
+logging.getLogger("httpx").setLevel(logging.ERROR)
+logging.getLogger("flashrank").setLevel(logging.ERROR)
+logging.getLogger("qdrant_client").setLevel(logging.ERROR)
+logging.getLogger("google").setLevel(logging.ERROR)
+logging.getLogger("google.generativeai").setLevel(logging.ERROR)
+
 from dotenv import load_dotenv
 from graph import build_arxiv_agent
 

@@ -1,0 +1,13 @@
+# Environments
+.env
+
+# Local Artifacts & Vector DBs
+data/
+*.pdf
+*.json
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/

@@ -33,6 +33,9 @@ def generate_briefing(state: AgentState):
 
     #Input sanitization
     cleaned_text = re.sub(r'\n{3,}', '\n\n', parsed_text)
+    split_match = re.search(r'\n#+\s*(References|Bibliography)\s*\n', cleaned_text, re.IGNORECASE)
+    if split_match:
+        cleaned_text = cleaned_text[:split_match.start()]
     
     # Trims to the first 40,000 characters (~10,000 tokens) 
     # This covers the Abstract, Intro, and Methodology
