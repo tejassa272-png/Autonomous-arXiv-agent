@@ -146,7 +146,7 @@ Agent: The answer is not found in the provided paper context.
 
 * **Dual-LLM Architecture (Gemini + Groq):** We leverage **Gemini 2.5 Flash** for its massive context window during the heavy summarization node (passing up to 40,000 characters of parsed markdown), and **Groq (LLaMA 3)** for the interactive Q&A loop to achieve sub-second response latency via specialized LPUs.
 * **Local Embedded Qdrant & FastEmbed:** By utilizing local file-based Qdrant and FastEmbed (`BAAI/bge-small-en-v1.5`), the system runs entirely offline without requiring cloud-hosted vector databases or paid vector services.
-* **FlashRank Document Compression:** Rather than blindly dumping all retrieved chunks into the LLM context window, the system uses FlashRank to re-rank and filter down to the top 3 most relevant chunks, eliminating noise and token bloat.
+* **FlashRank Document Compression:** Rather than blindly dumping all retrieved chunks into the LLM context window, the system uses FlashRank to re-rank and filter down to the top 5 most relevant chunks, eliminating noise and token bloat.
 * **Graceful Failure Degradation:** If an arXiv PDF is scanned, encrypted, or fails to download cleanly, the pipeline catches the exception and automatically falls back to an abstract-only briefing instead of crashing the run.
 * **Context Truncation & State Protection:** Chat history is capped at the last 6 messages (`[-6:]`) to prevent context window overflow during extended Q&A sessions.
 * **Resource Management & File Locking:** Embedded Qdrant clients are explicitly closed via a `try...finally` block after each query to prevent flat-file SQLite/RocksDB locking conflicts.
